@@ -1,0 +1,59 @@
+
+
+
+import discord
+from discord.ext import commands
+import algoribot as ab
+import os,random
+import requests
+
+def get_duck_image_url():    
+    url = 'https://random-d.uk/api/random'
+    res = requests.get(url)
+    data = res.json()
+    return data['url']
+
+intents = discord.Intents.default()
+intents.message_content = True
+token = ''
+
+bot = commands.Bot(command_prefix = '+' , intents = intents)
+
+@bot.event
+async def on_ready():
+    print(f'Hola, soy {bot.user.name}')
+
+@bot.command(name = "hi")
+async def hello(ctx , nombre):
+    await ctx.send(f'Hola soy {bot.user.name} un gusto { nombre}')
+
+@bot.command(name = "bye")
+async def hello(ctx , nombre):
+    await ctx.send(f'chao { nombre}')
+
+@bot.command(name = "psw")
+async def password(ctx,a:str,b:int):
+    nombre =str(a)
+    cr = ab.gen_pass(b)
+    await ctx.send(f'Su contraseña es : {cr}  {  nombre}')
+
+@bot.command(name='meme')
+async def mem(ctx):
+    with open('memes/juzgar.jpg','rb') as f:
+        picture = discord.File(f)
+    await ctx.send(file = picture)
+
+@bot.command(name='meme1')
+async def mem(ctx):
+    j = random.choice(os.listdir('memes'))
+    with open(f"memes/{j}",'rb') as f:
+        picture = discord.File(f)
+    await ctx.send(file = picture)
+
+@bot.command(name='pato')
+async def duck(ctx):
+    image = get_duck_image_url()
+    await ctx.send(image)
+
+
+bot.run(token)
